@@ -22,11 +22,21 @@ public class GreetingController {
 	@GetMapping("/instrument")
 	public String instrument(@RequestParam(name="instrumentId", required=false, defaultValue = "0000012") int instrumentId, Model model) {
 
-		Instrument ins = getInstrument(instrumentId);
-	
+//		Instrument ins = getInstrument(instrumentId);
+		Instrument ins = new Instrument(1,123,"Mortens New instrument", "Longname for instrument","Morten");
+
 		model.addAttribute("instrumentId", instrumentId);
 		model.addAttribute("instrument", ins);
 		return "instrument";
+	}
+
+	@GetMapping("/catFact")
+	public String catFact(Model model) {
+		CatFact catFact = getCatFact();
+
+		model.addAttribute("catFact", catFact.fact());
+		model.addAttribute("length",catFact.length());
+		return "catFact";
 	}
 
 
@@ -34,6 +44,10 @@ public class GreetingController {
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
 		this.restTemplate =  builder.build();
 		return this.restTemplate;
+	}
+
+	public CatFact getCatFact() {
+		return restTemplate.getForObject("https://catfact.ninja/fact",CatFact.class);
 	}
 	
 	public Instrument getInstrument(int instrumentId) {
